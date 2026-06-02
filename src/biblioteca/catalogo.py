@@ -45,6 +45,29 @@ class Catalogo:
         """Retorna todos os documentos do catálogo."""
         return list(self._documentos)
 
+    def listar_por_tipo(self) -> dict[str, list[Documento]]:
+        """Agrupa os documentos por tipo (artigo/tese/livro)."""
+        grupos: dict[str, list[Documento]] = {}
+        for doc in self._documentos:
+            grupos.setdefault(doc.tipo, []).append(doc)
+        return grupos
+
+    def listar_por_ano(self) -> dict[int, list[Documento]]:
+        """Agrupa os documentos por ano de publicação."""
+        grupos: dict[int, list[Documento]] = {}
+        for doc in self._documentos:
+            grupos.setdefault(doc.ano, []).append(doc)
+        return grupos
+
+    def buscar(self, termo: str) -> list[Documento]:
+        """Busca documentos por título ou autor (case-insensitive)."""
+        alvo = termo.lower()
+        return [
+            doc
+            for doc in self._documentos
+            if alvo in doc.titulo.lower() or alvo in doc.autor.lower()
+        ]
+
     # -- operações ----------------------------------------------------------
 
     def adicionar(

@@ -52,3 +52,36 @@ def test_adicionar_origem_inexistente_levanta_erro(catalogo):
         cat.adicionar(
             origem="nao_existe.pdf", titulo="X", autor="Y", tipo="artigo", ano=2020
         )
+
+
+def _popular(cat, origem):
+    """Adiciona alguns documentos variados ao catálogo de teste."""
+    cat.adicionar(origem=origem, titulo="Artigo 2021", autor="Ana", tipo="artigo", ano=2021)
+    cat.adicionar(origem=origem, titulo="Livro 2020", autor="Beto", tipo="livro", ano=2020)
+    cat.adicionar(origem=origem, titulo="Artigo 2020", autor="Carla", tipo="artigo", ano=2020)
+
+
+def test_listar_por_tipo_agrupa(catalogo):
+    cat, origem = catalogo
+    _popular(cat, origem)
+    grupos = cat.listar_por_tipo()
+    assert set(grupos.keys()) == {"artigo", "livro"}
+    assert len(grupos["artigo"]) == 2
+    assert len(grupos["livro"]) == 1
+
+
+def test_listar_por_ano_agrupa(catalogo):
+    cat, origem = catalogo
+    _popular(cat, origem)
+    grupos = cat.listar_por_ano()
+    assert set(grupos.keys()) == {2020, 2021}
+    assert len(grupos[2020]) == 2
+    assert len(grupos[2021]) == 1
+
+
+def test_buscar_por_titulo_e_autor(catalogo):
+    cat, origem = catalogo
+    _popular(cat, origem)
+    assert len(cat.buscar("Artigo")) == 2  # por título
+    assert len(cat.buscar("ana")) == 1     # por autor, case-insensitive
+    assert cat.buscar("inexistente") == []
