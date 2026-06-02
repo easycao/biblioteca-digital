@@ -85,3 +85,42 @@ def test_buscar_por_titulo_e_autor(catalogo):
     assert len(cat.buscar("Artigo")) == 2  # por título
     assert len(cat.buscar("ana")) == 1     # por autor, case-insensitive
     assert cat.buscar("inexistente") == []
+
+
+def test_obter_por_id(catalogo):
+    cat, origem = catalogo
+    doc = cat.adicionar(origem=origem, titulo="T", autor="A", tipo="tese", ano=2022)
+    assert cat.obter(doc.id) == doc
+    assert cat.obter("inexistente") is None
+
+
+def test_renomear_atualiza_titulo(catalogo):
+    cat, origem = catalogo
+    doc = cat.adicionar(origem=origem, titulo="Antigo", autor="A", tipo="livro", ano=2020)
+    cat.renomear(doc.id, novo_titulo="Novo Título")
+    assert cat.obter(doc.id).titulo == "Novo Título"
+    # persistido
+    cat2 = Catalogo(caminho_json=cat.caminho_json, pasta_acervo=cat.pasta_acervo)
+    assert cat2.obter(doc.id).titulo == "Novo Título"
+
+
+def test_renomear_id_inexistente_levanta_erro(catalogo):
+    cat, _ = catalogo
+    with pytest.raises(KeyError):
+        cat.renomear("nao_existe", novo_titulo="X")
+
+
+def test_remover_apaga_arquivo_e_entrada(catalogo):
+    cat, origem = catalogo
+    doc = cat.adicionar(origem=origem, titulo="T", autor="A", tipo="artigo", ano=2020)
+    caminho_arquivo = cat.pasta_acervo / doc.arquivo
+    assert caminho_arquivo.is_file()
+    cat.remover(doc.id)
+    assert not caminho_arquivo.exists()      # arquivo apagado do disco
+    assert cat.obter(doc.id) is None          # entrada removida do catálogo
+
+
+def test_remover_id_inexistente_levanta_erro(catalogo):
+    cat, _ = catalogo
+    with pytest.raises(KeyError):
+        cat.remover("nao_existe")

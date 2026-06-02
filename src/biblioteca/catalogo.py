@@ -68,6 +68,13 @@ class Catalogo:
             if alvo in doc.titulo.lower() or alvo in doc.autor.lower()
         ]
 
+    def obter(self, id_documento: str) -> Documento | None:
+        """Retorna o documento com o id informado, ou None se não existir."""
+        for doc in self._documentos:
+            if doc.id == id_documento:
+                return doc
+        return None
+
     # -- operações ----------------------------------------------------------
 
     def adicionar(
@@ -100,3 +107,23 @@ class Catalogo:
         self._documentos.append(doc)
         self._salvar()
         return doc
+
+    def renomear(self, id_documento: str, novo_titulo: str) -> Documento:
+        """Atualiza o título de um documento existente."""
+        doc = self.obter(id_documento)
+        if doc is None:
+            raise KeyError(f"Documento não encontrado: {id_documento}")
+        doc.titulo = novo_titulo
+        self._salvar()
+        return doc
+
+    def remover(self, id_documento: str) -> None:
+        """Remove o documento: apaga o arquivo do disco e a entrada do catálogo."""
+        doc = self.obter(id_documento)
+        if doc is None:
+            raise KeyError(f"Documento não encontrado: {id_documento}")
+        caminho_arquivo = self.pasta_acervo / doc.arquivo
+        if armazenamento.arquivo_existe(caminho_arquivo):
+            armazenamento.remover_arquivo(caminho_arquivo)
+        self._documentos.remove(doc)
+        self._salvar()
