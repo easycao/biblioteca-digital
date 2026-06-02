@@ -45,6 +45,10 @@ class Catalogo:
         """Retorna todos os documentos do catálogo."""
         return list(self._documentos)
 
+    def contar(self) -> int:
+        """Retorna a quantidade de documentos no catálogo."""
+        return len(self._documentos)
+
     def listar_por_tipo(self) -> dict[str, list[Documento]]:
         """Agrupa os documentos por tipo (artigo/tese/livro)."""
         grupos: dict[str, list[Documento]] = {}
