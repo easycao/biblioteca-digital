@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Acervo gerenciado em runtime (não versionar os documentos reais)
+acervo/*
+!acervo/.gitkeep
+
+# Catálogo gerado em runtime
+catalogo.json
+
+# SO
+Thumbs.db
+.DS_Store
