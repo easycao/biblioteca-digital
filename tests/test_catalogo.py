@@ -124,3 +124,10 @@ def test_remover_id_inexistente_levanta_erro(catalogo):
     cat, _ = catalogo
     with pytest.raises(KeyError):
         cat.remover("nao_existe")
+
+
+def test_contar_documentos(catalogo):
+    cat, origem = catalogo
+    assert cat.contar() == 0
+    cat.adicionar(origem=origem, titulo="T", autor="A", tipo="artigo", ano=2020)
+    assert cat.contar() == 1
