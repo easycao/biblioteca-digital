@@ -5,7 +5,10 @@ Camada de apresentação. Funções de formatação são puras (testáveis sem i
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
+from src.biblioteca import armazenamento
+from src.biblioteca.catalogo import Catalogo
 from src.biblioteca.modelos import Documento
 
 
@@ -45,10 +48,6 @@ def formatar_por_ano(grupos: dict[int, list[Documento]]) -> str:
 # ---------------------------------------------------------------------------
 # Menu de contexto interativo
 # ---------------------------------------------------------------------------
-
-from pathlib import Path
-
-from src.biblioteca.catalogo import Catalogo
 
 MENU = """
 === Biblioteca Digital ===
@@ -121,8 +120,6 @@ def _opcao_buscar(cat: Catalogo) -> None:
 
 
 def _opcao_ler(cat: Catalogo) -> None:
-    from src.biblioteca import armazenamento
-
     id_doc = input("Id do documento: ").strip()
     doc = cat.obter(id_doc)
     if doc is None:

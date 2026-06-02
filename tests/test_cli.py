@@ -1,5 +1,10 @@
 """Testes da camada de interface de linha de comando."""
+import builtins
+
+import pytest
+
 from src.biblioteca import cli
+from src.biblioteca.catalogo import Catalogo
 from src.biblioteca.modelos import Documento
 
 
@@ -27,13 +32,6 @@ def test_formatar_por_ano_ordena_decrescente():
 
 def test_formatar_lista_vazia():
     assert "Nenhum documento" in cli.formatar_por_tipo({})
-
-
-import builtins
-
-import pytest
-
-from src.biblioteca.catalogo import Catalogo
 
 
 @pytest.fixture
