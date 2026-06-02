@@ -84,3 +84,16 @@ def test_menu_opcao_invalida_continua(monkeypatch, capsys, cat_pronto):
     cli.executar_menu(cat)
     saida = capsys.readouterr().out
     assert "inválida" in saida.lower()
+
+
+def test_construir_parser_aceita_listar_por_tipo():
+    parser = cli.construir_parser()
+    args = parser.parse_args(["listar", "--por", "tipo"])
+    assert args.comando == "listar"
+    assert args.por == "tipo"
+
+
+def test_construir_parser_aceita_listar_por_ano():
+    parser = cli.construir_parser()
+    args = parser.parse_args(["listar", "--por", "ano"])
+    assert args.por == "ano"

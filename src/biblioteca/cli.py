@@ -4,6 +4,8 @@ Camada de apresentação. Funções de formatação são puras (testáveis sem i
 """
 from __future__ import annotations
 
+import argparse
+
 from src.biblioteca.modelos import Documento
 
 
@@ -161,11 +163,31 @@ def executar_menu(cat: Catalogo) -> None:
         acao(cat)
 
 
-def main() -> None:
-    """Ponto de entrada: monta o catálogo padrão e inicia o menu."""
+def construir_parser() -> argparse.ArgumentParser:
+    """Monta o parser de comandos diretos (modo não interativo)."""
+    parser = argparse.ArgumentParser(
+        description="Sistema de gerenciamento de biblioteca digital."
+    )
+    sub = parser.add_subparsers(dest="comando")
+    p_listar = sub.add_parser("listar", help="Lista documentos.")
+    p_listar.add_argument(
+        "--por", choices=["tipo", "ano"], default="tipo", help="Critério de agrupamento."
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Ponto de entrada: comando direto se houver args, senão menu interativo."""
     raiz = Path(__file__).resolve().parents[2]
     cat = Catalogo(
         caminho_json=raiz / "catalogo.json",
         pasta_acervo=raiz / "acervo",
     )
-    executar_menu(cat)
+    args = construir_parser().parse_args(argv)
+    if args.comando == "listar":
+        if args.por == "ano":
+            print(formatar_por_ano(cat.listar_por_ano()))
+        else:
+            print(formatar_por_tipo(cat.listar_por_tipo()))
+    else:
+        executar_menu(cat)
