@@ -131,3 +131,19 @@ def test_contar_documentos(catalogo):
     assert cat.contar() == 0
     cat.adicionar(origem=origem, titulo="T", autor="A", tipo="artigo", ano=2020)
     assert cat.contar() == 1
+
+
+def test_listar_por_formato_agrupa(catalogo):
+    cat, tmp = catalogo
+    # cria origens com formatos diferentes
+    pdf = tmp.parent / "a.pdf"
+    pdf.write_text("x", encoding="utf-8")
+    epub = tmp.parent / "b.epub"
+    epub.write_text("y", encoding="utf-8")
+    cat.adicionar(origem=pdf, titulo="P1", autor="A", tipo="livro", ano=2020)
+    cat.adicionar(origem=pdf, titulo="P2", autor="B", tipo="artigo", ano=2021)
+    cat.adicionar(origem=epub, titulo="E1", autor="C", tipo="tese", ano=2022)
+    grupos = cat.listar_por_formato()
+    assert set(grupos.keys()) == {"pdf", "epub"}
+    assert len(grupos["pdf"]) == 2
+    assert len(grupos["epub"]) == 1

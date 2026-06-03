@@ -21,16 +21,20 @@ def _linha_documento(doc: Documento) -> str:
     return f"  [{doc.id}] {doc.titulo} — {doc.autor} ({doc.ano}, {doc.formato})"
 
 
-def formatar_por_tipo(grupos: dict[str, list[Documento]]) -> str:
-    """Formata os documentos agrupados por tipo."""
+def formatar_por_chave_texto(grupos: dict[str, list[Documento]]) -> str:
+    """Formata documentos agrupados por uma chave de texto (formato ou categoria)."""
     if not grupos:
         return "Nenhum documento cadastrado."
     partes: list[str] = []
-    for tipo in sorted(grupos):
-        partes.append(f"== {tipo.upper()} ==")
-        for doc in grupos[tipo]:
+    for chave in sorted(grupos):
+        partes.append(f"== {chave.upper()} ==")
+        for doc in grupos[chave]:
             partes.append(_linha_documento(doc))
     return "\n".join(partes)
+
+
+# Mantém o nome anterior como apelido para compatibilidade.
+formatar_por_tipo = formatar_por_chave_texto
 
 
 def formatar_por_ano(grupos: dict[int, list[Documento]]) -> str:
@@ -51,19 +55,24 @@ def formatar_por_ano(grupos: dict[int, list[Documento]]) -> str:
 
 MENU = """
 === Biblioteca Digital ===
-1. Listar documentos (por tipo)
-2. Listar documentos (por ano)
-3. Adicionar documento
-4. Renomear documento
-5. Remover documento
-6. Buscar documento
-7. Ler/abrir documento
+1. Listar documentos (por tipo de arquivo)
+2. Listar documentos (por categoria)
+3. Listar documentos (por ano)
+4. Adicionar documento
+5. Renomear documento
+6. Remover documento
+7. Buscar documento
+8. Ler/abrir documento
 0. Sair
 """
 
 
+def _opcao_listar_por_formato(cat: Catalogo) -> None:
+    print(formatar_por_chave_texto(cat.listar_por_formato()))
+
+
 def _opcao_listar_por_tipo(cat: Catalogo) -> None:
-    print(formatar_por_tipo(cat.listar_por_tipo()))
+    print(formatar_por_chave_texto(cat.listar_por_tipo()))
 
 
 def _opcao_listar_por_ano(cat: Catalogo) -> None:
@@ -135,13 +144,14 @@ def _opcao_ler(cat: Catalogo) -> None:
 
 
 _ACOES = {
-    "1": _opcao_listar_por_tipo,
-    "2": _opcao_listar_por_ano,
-    "3": _opcao_adicionar,
-    "4": _opcao_renomear,
-    "5": _opcao_remover,
-    "6": _opcao_buscar,
-    "7": _opcao_ler,
+    "1": _opcao_listar_por_formato,
+    "2": _opcao_listar_por_tipo,
+    "3": _opcao_listar_por_ano,
+    "4": _opcao_adicionar,
+    "5": _opcao_renomear,
+    "6": _opcao_remover,
+    "7": _opcao_buscar,
+    "8": _opcao_ler,
 }
 
 
@@ -168,7 +178,10 @@ def construir_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="comando")
     p_listar = sub.add_parser("listar", help="Lista documentos.")
     p_listar.add_argument(
-        "--por", choices=["tipo", "ano"], default="tipo", help="Critério de agrupamento."
+        "--por",
+        choices=["formato", "tipo", "ano"],
+        default="formato",
+        help="Critério de agrupamento (formato = tipo de arquivo).",
     )
     return parser
 
@@ -184,7 +197,9 @@ def main(argv: list[str] | None = None) -> None:
     if args.comando == "listar":
         if args.por == "ano":
             print(formatar_por_ano(cat.listar_por_ano()))
-        else:
-            print(formatar_por_tipo(cat.listar_por_tipo()))
+        elif args.por == "tipo":
+            print(formatar_por_chave_texto(cat.listar_por_tipo()))
+        else:  # "formato" = tipo de arquivo (padrão)
+            print(formatar_por_chave_texto(cat.listar_por_formato()))
     else:
         executar_menu(cat)

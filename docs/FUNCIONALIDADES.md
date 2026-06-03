@@ -56,8 +56,10 @@ Carrega o catálogo existente (se houver) ao instanciar.
 | `renomear(id_documento, novo_titulo)` | `str, str` | `Documento` | Atualiza o título. Erro (`KeyError`) se o id não existir. |
 | `remover(id_documento)` | `str` | `None` | Apaga o arquivo do disco e a entrada do catálogo. |
 | `listar()` | — | `list[Documento]` | Todos os documentos. |
-| `listar_por_tipo()` | — | `dict[str, list[Documento]]` | Agrupa por tipo. |
-| `listar_por_ano()` | — | `dict[int, list[Documento]]` | Agrupa por ano. |
+| `contar()` | — | `int` | Quantidade de documentos no catálogo. |
+| `listar_por_formato()` | — | `dict[str, list[Documento]]` | Agrupa por **tipo de arquivo** (pdf/epub/txt...). |
+| `listar_por_tipo()` | — | `dict[str, list[Documento]]` | Agrupa por **categoria** (artigo/tese/livro). |
+| `listar_por_ano()` | — | `dict[int, list[Documento]]` | Agrupa por ano de publicação. |
 | `buscar(termo)` | `str` | `list[Documento]` | Busca por título ou autor (case-insensitive). |
 
 **Exemplo:**
@@ -94,7 +96,7 @@ cat.remover(doc.id)
 | Função | Descrição |
 |--------|-----------|
 | `executar_menu(cat)` | Loop do menu de contexto interativo. |
-| `construir_parser()` | Parser de comandos diretos (`listar --por tipo\|ano`). |
-| `formatar_por_tipo(grupos)` | Formata documentos agrupados por tipo. |
+| `construir_parser()` | Parser de comandos diretos (`listar --por formato\|tipo\|ano`). |
+| `formatar_por_chave_texto(grupos)` | Formata documentos agrupados por chave de texto (formato ou categoria). Apelido: `formatar_por_tipo`. |
 | `formatar_por_ano(grupos)` | Formata documentos agrupados por ano. |
 | `main(argv=None)` | Entrypoint: comando direto ou menu. |
