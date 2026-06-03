@@ -49,8 +49,15 @@ class Catalogo:
         """Retorna a quantidade de documentos no catálogo."""
         return len(self._documentos)
 
+    def listar_por_formato(self) -> dict[str, list[Documento]]:
+        """Agrupa os documentos por tipo de arquivo / formato (pdf, epub, txt...)."""
+        grupos: dict[str, list[Documento]] = {}
+        for doc in self._documentos:
+            grupos.setdefault(doc.formato, []).append(doc)
+        return grupos
+
     def listar_por_tipo(self) -> dict[str, list[Documento]]:
-        """Agrupa os documentos por tipo (artigo/tese/livro)."""
+        """Agrupa os documentos por categoria (artigo/tese/livro)."""
         grupos: dict[str, list[Documento]] = {}
         for doc in self._documentos:
             grupos.setdefault(doc.tipo, []).append(doc)

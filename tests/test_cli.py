@@ -51,19 +51,29 @@ def _entradas(monkeypatch, respostas):
     monkeypatch.setattr(builtins, "input", lambda *a, **k: next(it))
 
 
-def test_menu_lista_por_tipo_e_sai(monkeypatch, capsys, cat_pronto):
+def test_menu_lista_por_formato_e_sai(monkeypatch, capsys, cat_pronto):
     cat, _ = cat_pronto
-    _entradas(monkeypatch, ["1", "0"])  # opção 1 (listar por tipo) e depois sair
+    _entradas(monkeypatch, ["1", "0"])  # opção 1 (por tipo de arquivo) e depois sair
     cli.executar_menu(cat)
     saida = capsys.readouterr().out
     assert "Doc Teste" in saida
+    assert "PDF" in saida.upper()  # agrupado pelo formato do arquivo
+
+
+def test_menu_lista_por_categoria_e_sai(monkeypatch, capsys, cat_pronto):
+    cat, _ = cat_pronto
+    _entradas(monkeypatch, ["2", "0"])  # opção 2 (por categoria) e depois sair
+    cli.executar_menu(cat)
+    saida = capsys.readouterr().out
+    assert "Doc Teste" in saida
+    assert "ARTIGO" in saida.upper()  # agrupado pela categoria do documento
 
 
 def test_menu_remover_pede_confirmacao(monkeypatch, capsys, cat_pronto):
     cat, _ = cat_pronto
     doc_id = cat.listar()[0].id
-    # opção 5 (remover), informa id, confirma com "s", depois sai
-    _entradas(monkeypatch, ["5", doc_id, "s", "0"])
+    # opção 6 (remover), informa id, confirma com "s", depois sai
+    _entradas(monkeypatch, ["6", doc_id, "s", "0"])
     cli.executar_menu(cat)
     assert cat.obter(doc_id) is None  # removido após confirmação
 
@@ -71,7 +81,7 @@ def test_menu_remover_pede_confirmacao(monkeypatch, capsys, cat_pronto):
 def test_menu_remover_cancela_sem_confirmar(monkeypatch, capsys, cat_pronto):
     cat, _ = cat_pronto
     doc_id = cat.listar()[0].id
-    _entradas(monkeypatch, ["5", doc_id, "n", "0"])  # responde "n" → não remove
+    _entradas(monkeypatch, ["6", doc_id, "n", "0"])  # responde "n" → não remove
     cli.executar_menu(cat)
     assert cat.obter(doc_id) is not None  # permanece
 
@@ -95,3 +105,15 @@ def test_construir_parser_aceita_listar_por_ano():
     parser = cli.construir_parser()
     args = parser.parse_args(["listar", "--por", "ano"])
     assert args.por == "ano"
+
+
+def test_construir_parser_aceita_listar_por_formato():
+    parser = cli.construir_parser()
+    args = parser.parse_args(["listar", "--por", "formato"])
+    assert args.por == "formato"
+
+
+def test_construir_parser_listar_padrao_e_formato():
+    parser = cli.construir_parser()
+    args = parser.parse_args(["listar"])  # sem --por
+    assert args.por == "formato"  # tipo de arquivo é o padrão (requisito do PDF)

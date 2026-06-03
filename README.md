@@ -10,7 +10,7 @@ automatizadas, com um catálogo de metadados sincronizado ao disco.
 
 - Manipulação de **arquivos**: adicionar (copiar para o acervo), abrir/ler, renomear e remover.
 - Manipulação de **diretórios**: criar, listar e remover.
-- Listagem de documentos **por tipo** e **por ano de publicação**.
+- Listagem de documentos **por tipo de arquivo** (formato), **por categoria** e **por ano de publicação**.
 - Busca por título ou autor.
 - Interface de linha de comando com **menu de contexto** interativo e modo de comando direto.
 
@@ -42,21 +42,26 @@ python main.py
 
 ```
 === Biblioteca Digital ===
-1. Listar documentos (por tipo)
-2. Listar documentos (por ano)
-3. Adicionar documento
-4. Renomear documento
-5. Remover documento
-6. Buscar documento
-7. Ler/abrir documento
+1. Listar documentos (por tipo de arquivo)
+2. Listar documentos (por categoria)
+3. Listar documentos (por ano)
+4. Adicionar documento
+5. Renomear documento
+6. Remover documento
+7. Buscar documento
+8. Ler/abrir documento
 0. Sair
 ```
+
+> "Por tipo de arquivo" agrupa pelo formato (PDF, ePUB, TXT...). "Por categoria"
+> agrupa pela natureza do documento (artigo, tese, livro).
 
 ### Comando direto
 
 ```bash
-python main.py listar --por tipo
-python main.py listar --por ano
+python main.py listar --por formato   # por tipo de arquivo (padrão)
+python main.py listar --por tipo      # por categoria (artigo/tese/livro)
+python main.py listar --por ano       # por ano de publicação
 ```
 
 ### Demonstração rápida
